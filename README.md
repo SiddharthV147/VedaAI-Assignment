@@ -1,8 +1,6 @@
 # VedaAI
 
-<video src="https://github.com/SiddharthV147/VedaAI-Assignment/raw/main/video.mp4" controls width="100%"></video>
-
-https://github.com/SiddharthV147/VedaAI-Assignment/raw/main/video.mp4
+<video src="https://github.com/SiddharthV147/VedaAI-Assignment/raw/main/video.mp4" controls muted width="100%"></video>
 
 Upload a question paper and a student answer sheet. The backend segments the
 handwriting, reads it, maps each answer to its question, and the frontend
