@@ -1,0 +1,20 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.docker-cache/
+
+backend/user_data/*
+!backend/user_data/.gitkeep
+backend/output/
+backend/user_input/
+
+# Models stay on disk locally; Render downloads them at image build.
+backend/models/**
+!backend/models/.gitkeep
+
+frontend/node_modules/
+frontend/.next/
+frontend/*.tsbuildinfo
