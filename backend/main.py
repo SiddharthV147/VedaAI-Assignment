@@ -46,6 +46,7 @@ app.add_middleware(
 app.include_router(router)
 
 
+@app.get("/")
 @app.get("/health")
 async def health() -> dict:
-    return {"status": "ok"}
+    return {"status": "ok", "service": "vedai-backend"}
