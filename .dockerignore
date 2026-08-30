@@ -1,0 +1,15 @@
+.git
+.cursor
+frontend
+backend/models
+backend/user_data
+backend/output
+backend/user_input
+backend/.env
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.next
+**/node_modules
+**/*.md
+**/*.ipynb

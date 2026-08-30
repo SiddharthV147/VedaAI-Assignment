@@ -1,15 +1,15 @@
 # Render Blueprint — https://render.com/docs/blueprint-spec
 #
-# Render has no GPU, so the backend image uses CPU PyTorch and downloads
-# CRAFT + TrOCR during the first Docker build. Use at least 8 GB RAM
-# (pro plus) or TrOCR-large will run out of memory.
+# Backend is the repo-root Dockerfile (CPU PyTorch; models download at build).
+# Frontend is a Node service — it does not use Docker.
+# Use at least 8 GB RAM on the backend or TrOCR-large will OOM.
 
 services:
   - type: web
     name: vedai-backend
     runtime: docker
-    dockerfilePath: ./backend/Dockerfile.render
-    dockerContext: ./backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     plan: 4c-8g
     healthCheckPath: /health
     envVars:

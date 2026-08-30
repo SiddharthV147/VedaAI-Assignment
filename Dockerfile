@@ -11,9 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY requirements.txt download_models.py ./
+COPY backend/requirements.txt backend/download_models.py ./
 
-# Render has no GPU. CPU wheels keep the image smaller than the CUDA build.
 RUN pip install --upgrade pip \
     && pip install typing-extensions "jinja2>=3.1" \
     && pip install torch==2.2.2 torchvision==0.17.2 \
@@ -23,7 +22,6 @@ RUN pip install --upgrade pip \
     && pip uninstall -y opencv-python opencv-contrib-python opencv-python-headless \
     && pip install numpy==1.26.4 opencv-python-headless==4.9.0.80
 
-# Optional: set HUGGINGFACE_API_KEY in the Render dashboard if Hub rate-limits the build.
 ARG HUGGINGFACE_API_KEY=
 ENV HUGGINGFACE_API_KEY=$HUGGINGFACE_API_KEY
 ENV HF_TOKEN=$HUGGINGFACE_API_KEY
@@ -31,9 +29,9 @@ ENV HUGGINGFACE_HUB_TOKEN=$HUGGINGFACE_API_KEY
 
 RUN python download_models.py -o /app/models
 
-COPY app/ ./app/
-COPY api/ ./api/
-COPY main.py start.sh ./
+COPY backend/app/ ./app/
+COPY backend/api/ ./api/
+COPY backend/main.py backend/start.sh ./
 RUN chmod +x start.sh && mkdir -p /app/user_data
 
 ENV TEXT_USE_CUDA=cpu
