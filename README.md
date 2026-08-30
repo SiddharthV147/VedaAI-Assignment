@@ -1,8 +1,8 @@
 # VedaAI
 
-![VedaAI demo](demo.gif)
+[![VedaAI demo](preview.png)](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)
 
-▶ **[Watch the full demo with audio](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)**
+▶ **[Watch the demo](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)**
 
 Upload a question paper and a student answer sheet. The backend segments the
 handwriting, reads it, maps each answer to its question, and the frontend
@@ -75,3 +75,16 @@ error. The first build downloads the weights and can take 10–20 minutes.
 5. After the first deploy, confirm the frontend env `NEXT_PUBLIC_BACKEND_URL` is the backend `https://….onrender.com` URL. Redeploy the frontend if that URL was missing at build time.
 
 Uploads are stored on a 10 GB disk at `/app/user_data`.
+
+## Resources
+
+Models
+
+- [microsoft/trocr-large-handwritten](https://huggingface.co/microsoft/trocr-large-handwritten) — recognition model used locally
+- [microsoft/trocr-base-handwritten](https://huggingface.co/microsoft/trocr-base-handwritten) — smaller variant used on Render
+
+Reading
+
+- [Best handwriting OCR tools for business](https://www.extend.ai/resources/best-handwriting-ocr-tools-business) — survey of the options before picking TrOCR
+- [PaddleOCR text recognition module](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html#1-overview) — alternative recognition stack
+- [Handwritten text recognition using OCR](https://learnopencv.com/handwritten-text-recognition-using-ocr/) — detection plus recognition walkthrough
