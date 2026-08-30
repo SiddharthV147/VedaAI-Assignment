@@ -1,8 +1,8 @@
 # VedaAI
 
-[![VedaAI demo](preview.png)](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)
+![VedaAI demo](demo.gif)
 
-▶ **[Watch the demo](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)**
+▶ **[Watch the full demo with audio](https://github.com/SiddharthV147/VedaAI-Assignment/blob/main/video.mp4)**
 
 Upload a question paper and a student answer sheet. The backend segments the
 handwriting, reads it, maps each answer to its question, and the frontend
