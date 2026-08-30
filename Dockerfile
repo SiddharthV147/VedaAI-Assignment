@@ -27,6 +27,10 @@ ENV HUGGINGFACE_API_KEY=$HUGGINGFACE_API_KEY
 ENV HF_TOKEN=$HUGGINGFACE_API_KEY
 ENV HUGGINGFACE_HUB_TOKEN=$HUGGINGFACE_API_KEY
 
+# The large checkpoint needs ~8 GB to load; base fits a small CPU instance.
+ARG TROCR_MODEL=trocr-base-handwritten
+ENV TROCR_MODEL=$TROCR_MODEL
+
 RUN python download_models.py -o /app/models
 
 COPY backend/app/ ./app/
@@ -37,6 +41,7 @@ RUN chmod +x start.sh && mkdir -p /app/user_data
 ENV TEXT_USE_CUDA=cpu
 ENV TEXT_MODELS_DIR=/app/models
 ENV UPLOAD_DIR=/app/user_data
+ENV TROCR_BATCH_SIZE=1
 ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000

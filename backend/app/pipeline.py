@@ -202,7 +202,7 @@ def _recognize(
                 log.info("recognized %s/%s", index, len(records))
         return records
 
-    processor, model, device = load_trocr(config.models_dir)
+    processor, model, device = load_trocr(config.models_dir, config.trocr_model)
     batch_size = max(1, config.batch_size)
     try:
         for start in range(0, len(records), batch_size):

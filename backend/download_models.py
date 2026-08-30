@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import urllib.request
 from pathlib import Path
 
@@ -25,8 +26,8 @@ REFINER_SOURCES = [
 ]
 
 DEFAULT_MODELS_DIR = Path(__file__).resolve().parent / "models"
-TROCR_REPO = "microsoft/trocr-large-handwritten"
-TROCR_DIRNAME = "trocr-large-handwritten"
+TROCR_DIRNAME = (os.environ.get("TROCR_MODEL") or "trocr-large-handwritten").strip()
+TROCR_REPO = f"microsoft/{TROCR_DIRNAME}"
 
 
 def _download_http(url: str, dest: Path) -> None:

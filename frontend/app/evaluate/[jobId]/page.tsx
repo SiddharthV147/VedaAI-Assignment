@@ -259,9 +259,11 @@ export default function EvaluatePage() {
   // Poll backend
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
+    let outages = 0;
     const poll = async () => {
       try {
         const s = await getStatus(jobId);
+        outages = 0;
         setStatus(s.status);
         setProgress(s.progress || "Working…");
         if (s.status === "completed") {
@@ -271,8 +273,28 @@ export default function EvaluatePage() {
         } else {
           timer = setTimeout(poll, 3000);
         }
-      } catch {
-        setError("Cannot reach backend.");
+      } catch (err) {
+        const code = (err as { response?: { status?: number } })?.response?.status;
+        if (code === 404) {
+          setError(
+            "This job no longer exists. The backend restarted while it was " +
+              "running, so please upload the PDFs again."
+          );
+        } else if (code && code >= 500) {
+          // Render answers 5xx while the service comes back up, so ride out
+          // a short restart instead of giving up on the job.
+          outages += 1;
+          if (outages > 20) {
+            setError(
+              "The backend stopped responding. It most likely ran out of " +
+                "memory during OCR; check the service logs."
+            );
+          } else {
+            timer = setTimeout(poll, 3000);
+          }
+        } else {
+          setError("Cannot reach backend.");
+        }
       }
     };
     poll();

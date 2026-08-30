@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import gc
 import io
+import logging
 import time
 from pathlib import Path
 
@@ -12,10 +13,12 @@ import torch
 from PIL import Image
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
-from app.config import use_cuda
+from app.config import trocr_model_name, use_cuda
 
-TROCR_DIRNAME = "trocr-large-handwritten"
-TROCR_HUB_ID = "microsoft/trocr-large-handwritten"
+log = logging.getLogger(__name__)
+
+TROCR_DIRNAME = trocr_model_name()
+TROCR_HUB_ID = f"microsoft/{TROCR_DIRNAME}"
 HF_INFERENCE_URL = f"https://router.huggingface.co/hf-inference/models/{TROCR_HUB_ID}"
 
 
@@ -41,13 +44,28 @@ def crop_to_png_bytes(crop: np.ndarray) -> bytes:
     return buffer.getvalue()
 
 
-def load_trocr(models_dir: Path):
-    local_dir = models_dir / TROCR_DIRNAME
-    if not (local_dir / "config.json").is_file():
-        raise FileNotFoundError(
-            f"TrOCR weights not found in {local_dir}. "
-            "Run: python download_models.py -o models"
-        )
+def _resolve_model_dir(models_dir: Path, name: str | None = None) -> Path:
+    """Directory holding the TrOCR weights.
+
+    Falls back to any other ``trocr-*`` folder that was downloaded, so a
+    container built with one size still starts if the env asks for another.
+    """
+    wanted = models_dir / (name or trocr_model_name())
+    if (wanted / "config.json").is_file():
+        return wanted
+    for candidate in sorted(models_dir.glob("trocr-*")):
+        if (candidate / "config.json").is_file():
+            log.warning("%s missing; using %s instead", wanted.name, candidate.name)
+            return candidate
+    raise FileNotFoundError(
+        f"TrOCR weights not found in {wanted}. "
+        "Run: python download_models.py -o models"
+    )
+
+
+def load_trocr(models_dir: Path, name: str | None = None):
+    local_dir = _resolve_model_dir(models_dir, name)
+    log.info("Loading TrOCR from %s", local_dir)
     processor = TrOCRProcessor.from_pretrained(str(local_dir), local_files_only=True)
     model = VisionEncoderDecoderModel.from_pretrained(
         str(local_dir), local_files_only=True

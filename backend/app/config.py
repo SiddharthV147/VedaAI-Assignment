@@ -7,11 +7,23 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
+DEFAULT_TROCR_MODEL = "trocr-large-handwritten"
+
+
 def load_env(base_dir: Path) -> None:
     for path in (base_dir / ".env", Path("/app/.env"), Path.cwd() / ".env"):
         if path.is_file():
             load_dotenv(path, override=False)
             break
+
+
+def trocr_model_name() -> str:
+    """Which TrOCR checkpoint to use.
+
+    ``trocr-base-handwritten`` needs roughly half the memory of the large one
+    and is much faster without a GPU, which is what a CPU host wants.
+    """
+    return (os.environ.get("TROCR_MODEL") or DEFAULT_TROCR_MODEL).strip()
 
 
 @dataclass(frozen=True)
@@ -35,6 +47,7 @@ class PipelineConfig:
     long_size: int = 2560
     min_ink_ratio: float = 0.002
     batch_size: int = 4
+    trocr_model: str = DEFAULT_TROCR_MODEL
     use_api: bool = False
     huggingface_api_key: str = ""
 
@@ -52,8 +65,17 @@ class PipelineConfig:
             or os.environ.get("HUGGING_FACE_HUB_TOKEN")
             or ""
         ).strip()
+        # A CPU host holds every image of the batch in memory at once, so a
+        # smaller batch is the difference between running and being killed.
+        default_batch = 4 if use_cuda() else 1
+        try:
+            batch_size = int(os.environ.get("TROCR_BATCH_SIZE", "") or default_batch)
+        except ValueError:
+            batch_size = default_batch
         return cls(
             models_dir=models_dir.resolve(),
+            batch_size=max(1, batch_size),
+            trocr_model=trocr_model_name(),
             use_api=use_api,
             huggingface_api_key=api_key,
         )

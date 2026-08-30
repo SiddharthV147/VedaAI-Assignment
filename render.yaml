@@ -21,6 +21,11 @@ services:
         value: /app/models
       - key: UPLOAD_DIR
         value: /app/user_data
+      # Must match the ARG baked into the image by the Dockerfile.
+      - key: TROCR_MODEL
+        value: trocr-base-handwritten
+      - key: TROCR_BATCH_SIZE
+        value: "1"
       - key: ALLOWED_ORIGIN_REGEX
         value: https://.*\.onrender\.com
       - key: ALLOWED_ORIGINS
