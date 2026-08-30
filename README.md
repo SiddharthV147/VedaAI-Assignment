@@ -1,6 +1,47 @@
 # VedaAI
 
-Upload a question paper and an answer sheet. The backend detects handwritten regions with CRAFT, reads them with TrOCR, and the frontend highlights the mapped answers.
+<video src="https://github.com/SiddharthV147/VedaAI-Assignment/raw/main/video.mp4" controls width="100%"></video>
+
+https://github.com/SiddharthV147/VedaAI-Assignment/raw/main/video.mp4
+
+Upload a question paper and a student answer sheet. The backend segments the
+handwriting, reads it, maps each answer to its question, and the frontend
+highlights the matching region on the PDF.
+
+I tested with the 4 model answer papers from the CBSE website, which cover
+clean, cursive, and messy handwriting.
+
+## Pipeline
+
+```
+PDF to image conversion          (PyMuPDF, 300 dpi)
+              |
+Correcting the orientation       (4-way, ink profile)
+              |
+Binarisation of images           (adaptive + Otsu)
+              |
+Text detection using CRAFT       (CRAFT + refiner)
+              |
+Splitting into single lines      (blank-row cuts)
+              |
+Crop and reading order           (top-left order)
+              |
+Handwriting recognition          (TrOCR large)
+              |
+Question paper parsing           (regex sections)
+              |
+Answer marker detection          (Q-number heuristics)
+              |
+Mapping and coordinate restore   (original page space)
+              |
+Persistence and response         (JSON + crops)
+```
+
+Detection worked better on images than on PDFs, so every page is rasterised
+first.
+
+For cost efficiency, both text detection and text extraction run locally on
+the machine rather than through a paid OCR API.
 
 ## Deploy on Render
 
