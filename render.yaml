@@ -11,6 +11,8 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     plan: 4c-8g
+    branch: main
+    autoDeployTrigger: commit
     healthCheckPath: /health
     envVars:
       - key: TEXT_USE_CUDA
@@ -38,6 +40,8 @@ services:
     runtime: node
     rootDir: frontend
     plan: 0.5c-512mb
+    branch: main
+    autoDeployTrigger: commit
     buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /
